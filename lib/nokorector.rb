@@ -19,8 +19,6 @@ module Widget
   def self.included into
     class << into
       def tag tag_name
-        d { self }
-        d { tag_name }
         define_method(tag_name) do |*args, &block|
           puts "#{tag_name}(#{args.join(', ')})"
           wrapper = NodeWrapper.new(_doc, tag_name, *args, &block)
@@ -47,13 +45,11 @@ class NodeWrapper
     _set_attributes attributes unless attributes.nil?
     
     args.compact.each do |content|
-      d { content }
       @node << content
     end
 
     unless block.nil?
       child = block.call 
-      d { child }
       child = child._node if child.is_a? NodeWrapper
       @node << child if child
     end
@@ -90,7 +86,6 @@ class NodeWrapper
   end
 
   def _add_attribute name, value
-    d { @node }
     @node[name] =
       ((@node[name] || '').split(/\s/) + [value]).join(' ')
   end

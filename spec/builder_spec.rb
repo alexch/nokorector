@@ -56,7 +56,6 @@ describe Widget do
   it "can set a single attribute with =" do
     x = alpha
     x.foo = "bar"
-    d { x }
     x.to_html.should == "<alpha foo=\"bar\"></alpha>"
   end    
 
@@ -112,5 +111,17 @@ describe Widget do
       "</beta></alpha>"
   end
 
+  xit "renders several tags in a row" do
+    x = 
+      alpha do
+        beta
+        gamma
+      end
+    x.to_html.should == 
+      "<alpha>" + 
+        "<beta></beta>" +
+        "<gamma></gamma>" + 
+      "</alpha>"
+  end
 
 end
