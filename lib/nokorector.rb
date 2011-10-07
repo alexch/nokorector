@@ -20,7 +20,7 @@ module Widget
     class << into
       def tag tag_name
         define_method(tag_name) do |*args, &block|
-          puts "#{tag_name}(#{args.join(', ')})"
+          puts "#{tag_name}(#{args.map(&:inspect).join(',')})"
           wrapper = NodeWrapper.new(_doc, tag_name, *args, &block)
           wrapper
         end
@@ -33,16 +33,16 @@ class NodeWrapper
   def initialize(doc, tag_name, *args, &block)
     @doc = doc
     @node = @doc.create_element tag_name.to_s
-    _set *args, &block
+    set *args, &block
   end
 
-  def _node
+  def node
     @node
   end
 
-  def _set *args, &block
+  def set *args, &block
     attributes = args.last.is_a?(Hash) ? args.pop : {}
-    _set_attributes attributes unless attributes.nil?
+    set_attributes attributes unless attributes.nil?
     
     args.compact.each do |content|
       @node << content
@@ -50,7 +50,7 @@ class NodeWrapper
 
     unless block.nil?
       child = block.call 
-      child = child._node if child.is_a? NodeWrapper
+      child = child.node if child.is_a? NodeWrapper
       @node << child if child
     end
     @node
@@ -60,32 +60,30 @@ class NodeWrapper
     @node.to_html
   end
 
-  # todo: test
-  # stolen from noko builder.rb
   def method_missing(method_name, *args, &block)
-    puts "called #{method_name}(#{args.join(',')})"
+    puts "#{node.name}.#{method_name}(#{args.map(&:inspect).join(',')})"
     case method_name.to_s
     when /^(.*)!$/
       @node['id'] = $1
     when /^(.*)=/
-      _set_attributes({$1 => args.join(' ')})
+      set_attributes({$1 => args.join(' ')})
       args = []
     else
-      _add_attribute 'class', method_name.to_s
+      add_attribute 'class', method_name.to_s
     end
 
-    _set *args, &block
+    set *args, &block
     self
   end
 
-  def _set_attributes attributes = {}
+  def set_attributes attributes = {}
     attributes.each do |k,v|
       @node[k.to_s] = ((@node[k.to_s] || '').split(/\s/) + [v]).join(' ')
     end
     self
   end
 
-  def _add_attribute name, value
+  def add_attribute name, value
     @node[name] =
       ((@node[name] || '').split(/\s/) + [value]).join(' ')
   end
