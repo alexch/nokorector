@@ -128,4 +128,58 @@ describe Widget do
       "</beta></alpha>"
   end
 
+  describe "to_html" do
+    it "renders the seed" do
+      alpha
+      self.to_html.should == "<alpha></alpha>"
+      self._seed.to_html.should == "<alpha></alpha>"
+    end
+  end
+
+  describe "put" do
+    it "emits text" do
+      put "foo"
+      to_html.should == "foo"
+    end
+
+    it "emits a series of strings" do
+      put "a", "b", "c"
+      to_html.should == "abc"
+    end
+
+    it "emits a tag" do
+      put alpha
+      to_html.should == "<alpha></alpha>"
+    end
+
+    it "emits a tag snuck in as an argument" do
+      put "a", alpha("b"), "c"
+      to_html.should == "a<alpha>b</alpha>c"
+    end
+
+    it "emits a tag with children as an argument" do
+      put "a", (alpha {beta; gamma;}), "c"
+      to_html.should == "a<alpha><beta></beta><gamma></gamma></alpha>c"
+    end
+
+    it "emits a tag stored in a variable as an argument" do
+      x = alpha {beta}
+      put "a", x , "c"
+      to_html.should == "a<alpha><beta></beta></alpha>c"
+    end
+
+    it "emits tags in weird orders" do
+      pending "still impossible :-(" do
+        x = alpha
+        y = gamma
+        put "a", y, beta, x, "c"
+        to_html.should == "a" + 
+          "<gamma></gamma>" +
+          "<beta></beta>" +
+          "<alpha></alpha>" + 
+          "c"
+      end
+    end
+  end
+
 end

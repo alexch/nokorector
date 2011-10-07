@@ -27,6 +27,16 @@ module Widget
     Seed.new(self)
   end
 
+  def put *args
+    args.each do |value|
+      _seed << value
+    end
+  end
+
+  def to_html
+    _seed.to_html
+  end
+
   def self.included into
     class << into
       def tag tag_name
@@ -58,11 +68,30 @@ class Seed
     @nodes
   end
 
+  def _node
+    @node
+  end
+
   #todo: rename @node to @latest_node
   def _tag tag_name
     @node = _doc.create_element tag_name.to_s
     @nodes << @node
     @node
+  end
+
+  def << value
+    case value
+    when Seed
+      # only push the current node, not all the nodes, otherwise
+      # we'll drag along all the prior stuff
+      value._nodes.delete value._node
+      self << value._node
+    when Nokogiri::XML::Node
+      @nodes << value
+    else
+      @nodes << (Nokogiri::XML::Text.new value.to_s, _doc)
+    end     
+    self
   end
 
   def _grow *args, &block
