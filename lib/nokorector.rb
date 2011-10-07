@@ -68,15 +68,14 @@ class Seed
     @nodes
   end
 
-  def _node
-    @node
+  def _active_node
+    @active_node
   end
 
-  #todo: rename @node to @latest_node
   def _tag tag_name
-    @node = _doc.create_element tag_name.to_s
-    @nodes << @node
-    @node
+    @active_node = _doc.create_element tag_name.to_s
+    @nodes << @active_node
+    @active_node
   end
 
   def << value
@@ -84,8 +83,8 @@ class Seed
     when Seed
       # only push the current node, not all the nodes, otherwise
       # we'll drag along all the prior stuff
-      value._nodes.delete value._node
-      self << value._node
+      value._nodes.delete value._active_node
+      self << value._active_node
     when Nokogiri::XML::Node
       @nodes << value
     else
@@ -99,7 +98,7 @@ class Seed
 
     # why would an arg be nil?  todo: try without compact
     args.compact.each do |content|
-      @node << content
+      @active_node << content
     end
 
     if block
@@ -116,11 +115,11 @@ class Seed
           child_seed._nodes << (Nokogiri::XML::Text.new value, _doc)
         end
 
-        @node << child_seed._nodes
+        @active_node << child_seed._nodes
 
         # nodes.compact.each do |n| 
         #   n.unlink if n.is_a? Nokogiri::XML::Node
-        #   @node << n
+        #   @active_node << n
         # end
 
       ensure
@@ -138,23 +137,23 @@ class Seed
 
   def _set_attributes hash = {}
     hash.each do |k,v|
-      @node[k.to_s] = ((@node[k.to_s] || '').split(/\s/) + [v]).join(' ')
+      @active_node[k.to_s] = ((@active_node[k.to_s] || '').split(/\s/) + [v]).join(' ')
     end
     self
   end
 
   def _add_to_attribute name, value
-    @node[name] =
-      ((@node[name] || '').split(/\s/) + [value]).join(' ')
+    @active_node[name] =
+      ((@active_node[name] || '').split(/\s/) + [value]).join(' ')
   end
 
   # handle all the fun stuff like dot-bang-id
   def method_missing(method_name, *args, &block)
     exit 2 if caller[0] =~ /method_missing/
-#    puts "#{@node.name}.#{method_name}(#{args.map(&:inspect).join(',')})"
+#    puts "#{@active_node.name}.#{method_name}(#{args.map(&:inspect).join(',')})"
     case method_name.to_s
     when /^(.*)!$/
-      @node['id'] = $1
+      @active_node['id'] = $1
     when /^(.*)=/
       _set_attributes ({$1 => args.join(' ')})
       args = []
