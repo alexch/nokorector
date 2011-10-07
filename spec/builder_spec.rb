@@ -34,7 +34,7 @@ describe Widget do
   include Widget
 
   before do
-    _reset!
+    @_doc = nil
   end
 
   it "doesn't know tags it doesn't know" do
@@ -73,7 +73,7 @@ describe Widget do
     alpha("foo").to_html.should == "<alpha>foo</alpha>"
   end
 
-  it "sets inner block text content" do
+  it "includes text merely returned by the block" do
     x = 
       alpha do
         "beta"
@@ -95,23 +95,7 @@ describe Widget do
     x.to_html.should == "<alpha><beta><gamma></gamma></beta></alpha>"
   end
 
-  it "mixes and matches" do
-    x = 
-      alpha.foo do
-        beta(hee: 'haw').bar!(baz: "baf") do
-          gamma do
-            "see"
-          end
-        end
-      end
-    x.to_html.should == 
-      "<alpha class=\"foo\">" + 
-      "<beta hee=\"haw\" id=\"bar\" baz=\"baf\">" +
-      "<gamma>see</gamma>" + 
-      "</beta></alpha>"
-  end
-
-  xit "renders several tags in a row" do
+  it "renders several tags in a row" do
     x = 
       alpha do
         beta
@@ -122,6 +106,26 @@ describe Widget do
         "<beta></beta>" +
         "<gamma></gamma>" + 
       "</alpha>"
+  end
+
+  it "mixes and matches" do
+    x = 
+      alpha.foo do
+        beta(hee: 'haw').bar!(baz: "baf") do
+          gamma do
+            "see"
+          end
+          gamma "saw"
+          "plus some text"
+        end
+      end
+    x.to_html.should == 
+      "<alpha class=\"foo\">" + 
+      "<beta hee=\"haw\" id=\"bar\" baz=\"baf\">" +
+      "<gamma>see</gamma>" + 
+      "<gamma>saw</gamma>" + 
+      "plus some text" +
+      "</beta></alpha>"
   end
 
 end
