@@ -134,6 +134,36 @@ describe Widget do
       self.to_html.should == "<alpha></alpha>"
       self._seed.to_html.should == "<alpha></alpha>"
     end
+
+    it "renders with options" do
+      pending
+      alpha {
+        beta "foo"
+        gamma {
+          alpha
+        }
+      }
+      self.to_html(:indent => 2, :save_with => 
+        Nokogiri::XML::Node::SaveOptions.new.to_i
+      ).should == <<-HTML
+<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
+<alpha>
+  <beta>foo</beta>
+  <gamma>
+    <alpha>
+    </alpha>
+  </gamma>
+</alpha>
+      HTML
+    end
+
+  end
+
+  describe "to_doc" do
+    it "produces a Nokogiri Document" do
+      alpha
+      assert { self.to_doc.is_a? Nokogiri::HTML::Document }
+    end
   end
 
   describe "put" do

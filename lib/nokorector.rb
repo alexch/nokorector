@@ -33,8 +33,18 @@ module Widget
     end
   end
 
-  def to_html
-    _seed.to_html
+  def to_doc
+    # workaround
+    def (_seed._nodes).type
+      :nodeset
+    end
+
+    _doc.children = _seed._nodes
+    _doc  
+  end
+
+  def to_html(options = {})
+    _seed.to_html(options)
   end
 
   def self.included into
@@ -131,8 +141,8 @@ class Seed
   end
 
   # todo: should we rename this?
-  def to_html
-    @nodes.to_html
+  def to_html(*args)
+    @nodes.to_html(*args)
   end
 
   def _set_attributes hash = {}
