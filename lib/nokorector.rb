@@ -1,6 +1,7 @@
 require 'nokogiri'
 
 module Nokorector
+  # http://nokogiri.org/Nokogiri/XML/Builder.html
   def erect &block
     # todo:
     # include Widget, execute block, *un*include Widget
@@ -34,17 +35,15 @@ module Widget
   end
 
   def to_doc
-    # workaround
-    def (_seed._nodes).type
-      :nodeset
-    end
-
+    dtd = _doc.children.first
+    # _doc.add_child _seed._nodes 
     _doc.children = _seed._nodes
+    _doc.children.first.add_previous_sibling dtd
     _doc  
   end
 
-  def to_html(options = {})
-    _seed.to_html(options)
+  def to_html(*args)
+    _seed.to_html(*args)
   end
 
   def self.included into

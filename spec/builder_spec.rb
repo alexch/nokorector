@@ -135,6 +135,9 @@ describe Widget do
       self._seed.to_html.should == "<alpha></alpha>"
     end
 
+# see http://nokogiri.org/Nokogiri/XML/Node/SaveOptions.html
+# and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-to_html
+# and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-write_to
     it "renders with options" do
       pending
       alpha {
@@ -143,10 +146,7 @@ describe Widget do
           alpha
         }
       }
-      self.to_html(:indent => 2, :save_with => 
-        Nokogiri::XML::Node::SaveOptions.new.to_i
-      ).should == <<-HTML
-<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
+      self.to_html(:indent => 2).should == <<-HTML
 <alpha>
   <beta>foo</beta>
   <gamma>
@@ -164,6 +164,26 @@ describe Widget do
       alpha
       assert { self.to_doc.is_a? Nokogiri::HTML::Document }
     end
+
+# see http://nokogiri.org/Nokogiri/XML/Node/SaveOptions.html
+# and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-to_html
+# and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-write_to
+    it "keeps the DOCTYPE" do
+      # pending
+      alpha {
+        beta "foo"
+        gamma {
+          alpha
+        }
+      }
+      self.to_doc.to_html(:indent => 2, :save_with => 
+        Nokogiri::XML::Node::SaveOptions.new.to_i
+      ).should =~ Regexp.new(Regexp.escape(<<-HTML))
+<!DOCTYPE xhtml PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
+      HTML
+    end
+
+
   end
 
   describe "put" do
