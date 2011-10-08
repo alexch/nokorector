@@ -6,35 +6,11 @@ require "wrong/adapters/rspec"
 
 puts "Ruby #{RUBY_VERSION}"
 
-describe "erect" do
-  include Nokorector
-  it "works" do
-    x = erect {
-      foo
-    }
-    assert { x.to_html == "<foo></foo>" }
-  end
-  it "adds a class" do
-    x = erect {
-      foo.bar
-    }
-    assert { x.to_html.include? "<foo class=\"bar\"></foo>" }
-  end
-
-  it "returns a Nokogiri HTML Doc" do
-    x = erect {
-      foo
-    }
-    assert { x.is_a? Nokogiri::XML::Node }
-  end
-
-end
-
-describe Widget do
-  include Widget
+describe Nokorector::Builder do
+  include Nokorector::Builder
 
   before do
-    @_doc = nil
+    @_doc = nil  # todo: cleaner way to clear
   end
 
   it "doesn't know tags it doesn't know" do
@@ -128,6 +104,24 @@ describe Widget do
       "</beta></alpha>"
   end
 
+  it "example 1" do
+    pending  "weird bug with tag.att="
+    alpha.foo("bar") do
+      beta.src = "baf"
+    end
+    to_html.should == '<alpha class="foo">bar<beta src="baf"></beta></alpha>'
+  end
+
+  tag :a
+  tag :b
+  tag :img
+
+  it "can pass a tag to a tag" do
+    pending
+    a(img(:src => "foo.jpg"), :href => "foo.html").to_html.should ==
+    "<a href=\"foo.html\"><img src=\"foo.jpg\"></img></a>"
+  end
+
   describe "to_html" do
     it "renders the seed" do
       alpha
@@ -169,7 +163,7 @@ describe Widget do
 # and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-to_html
 # and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-write_to
     it "keeps the DOCTYPE" do
-      # pending
+      pending
       alpha {
         beta "foo"
         gamma {
@@ -182,7 +176,6 @@ describe Widget do
 <!DOCTYPE xhtml PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
       HTML
     end
-
 
   end
 
@@ -230,6 +223,18 @@ describe Widget do
           "c"
       end
     end
+
+    it "example 2" do
+      put "a", b("c"), "d"
+      to_html.should == 'a<b>c</b>d'
+    end
+
+    it "mixes" do
+      pending
+      put "a", img.src="foo.gif", b("c")
+      to_html.should == 'a<img src="foo.gif"></img><b>c</b>'
+    end
+
   end
 
 end

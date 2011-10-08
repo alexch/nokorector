@@ -1,16 +1,7 @@
 require 'nokogiri'
 
 module Nokorector
-  # http://nokogiri.org/Nokogiri/XML/Builder.html
-  def erect &block
-    # todo:
-    # include Widget, execute block, *un*include Widget
-    builder = Nokogiri::HTML::Builder.new &block
-    builder.doc.root
-  end
-end
-
-module Widget
+module Builder
   def _doc
     @_doc ||= Nokogiri::HTML::Document.new
   end
@@ -163,7 +154,7 @@ class Seed
     case method_name.to_s
     when /^(.*)!$/
       @active_node['id'] = $1
-    when /^(.*)=/
+    when /^(.*)=$/
       _set_attributes ({$1 => args.join(' ')})
       args = []
     else
@@ -174,4 +165,5 @@ class Seed
     self
   end
 
+end
 end
