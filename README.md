@@ -1,8 +1,9 @@
-= Nokorector
+# Nokorector
 
 An experimental XML/HTML builder framework.
 
-* `include Builder` gives your current class some methods and a `@_seed` instance variable
+* definition: "seed" is a nascent XML/HTML node or fragment or doc; think of it as the output stream
+* `include Builder` gives your object some methods and a `@_seed` instance variable
 * using the macro `tag` defines a method that, when called, will add an XML/HTML element to the seed
 * the tag methods work like Erector (or Nokogiri::Builder) methods: they can take text (for inner text content), a hash (for attributes), or a block (for nested content)
 * a tag method adds its element to the seed (a growing XML/HTML document), but it also returns a pointer to itself within that seed
@@ -23,3 +24,6 @@ The upshot of all the above is to enable some slick and (hopefully) fairly well-
     #=> <div class="foo">bar<baz src="baf"></baz></div>
 
 (Some of these tricks don't quite work yet, but I'm thinking of a data structure tweak to allow them all.)
+
+See `spec/builder_spec.rb` for usage details.
+
