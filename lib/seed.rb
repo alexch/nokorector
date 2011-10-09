@@ -102,9 +102,12 @@ module Nokorector
       exit 2 if caller[0] =~ /method_missing/
   #    puts "#{@active_node.name}.#{method_name}(#{args.map(&:inspect).join(',')})"
       case method_name.to_s
+      when /^_(.*)$/
+        super
       when /^(.*)!$/
         @active_node['id'] = $1
       when /^(.*)=$/
+        super
         raise "attribute assignment not supported"
       else
         _add_to_attribute 'class', method_name.to_s
