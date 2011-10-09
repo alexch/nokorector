@@ -10,6 +10,20 @@ module Nokorector
       end
     end
 
+    describe "as a linked list" do
+      it "contains its node" do
+        seed = Seed.new(@builder)._tag("a")
+        assert { seed._nodes == [seed._active_node] }
+      end
+
+      it "points to its prior seed" do
+        pending
+        a = Seed.new(@builder)._tag("a")
+        b = Seed.new(@builder, a)._tag("b")
+        assert { b._nodes == [a, b] }
+      end
+    end
+
     describe "method_missing magic" do
       describe "unknown underscore methods" do
         it "are reserved" do

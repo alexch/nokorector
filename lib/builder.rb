@@ -25,7 +25,7 @@ module Nokorector::Builder
   def to_doc
     dtd = _doc.children.first
     # _doc.add_child _seed._nodes 
-    _doc.children = _seed._nodes
+    _doc.children = _seed._nodeset
     _doc.children.first.add_previous_sibling dtd
     _doc  
   end

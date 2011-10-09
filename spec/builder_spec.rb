@@ -116,7 +116,8 @@ describe Builder do
 
   it "can pass a tag to a tag" do
     pending
-    a(img(:src => "foo.jpg"), :href => "foo.html").to_html.should ==
+    a(img(:src => "foo.jpg"), :href => "foo.html")
+    to_html.should ==
     "<a href=\"foo.html\"><img src=\"foo.jpg\"></img></a>"
   end
 

@@ -3,10 +3,10 @@
 #
 module Nokorector
   class Seed
-    def initialize(widget, parent = nil)
+    def initialize(widget, prior = nil)
       @widget = widget
-      @parent = parent
-      @nodes = Nokogiri::XML::NodeSet.new(_doc)
+      @prior = prior
+      @nodes = []
     end
 
     def _doc
@@ -19,6 +19,10 @@ module Nokorector
 
     def _active_node
       @active_node
+    end
+
+    def _nodeset
+      Nokogiri::XML::NodeSet.new(_doc, @nodes)
     end
 
     def _tag tag_name
@@ -47,6 +51,11 @@ module Nokorector
 
       # why would an arg be nil?  todo: try without compact
       args.compact.each do |content|
+        # if Seed === content
+        #   # todo: detach it
+        #   content = content._active_node
+
+        # end
         @active_node << content
       end
 
@@ -64,7 +73,7 @@ module Nokorector
             child_seed._nodes << (Nokogiri::XML::Text.new value, _doc)
           end
 
-          @active_node << child_seed._nodes
+          @active_node << child_seed._nodeset
 
           # nodes.compact.each do |n| 
           #   n.unlink if n.is_a? Nokogiri::XML::Node
@@ -82,7 +91,7 @@ module Nokorector
     # todo: should we rename this?
     def to_html(*args)
       # puts "before to_html: #{@nodes.inspect}"
-      @nodes.to_html(*args)
+      _nodeset.to_html(*args)
     end
 
     def _set_attributes hash = {}
