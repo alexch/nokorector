@@ -19,7 +19,7 @@ The upshot of all the above is to enable some slick and (hopefully) fairly well-
     #=> a<b>c</b>d
 
     div.foo("bar") do
-      baz.src = "baf"
+      baz(src: "baf")
     end
     #=> <div class="foo">bar<baz src="baf"></baz></div>
 

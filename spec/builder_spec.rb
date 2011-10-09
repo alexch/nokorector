@@ -1,13 +1,9 @@
 here = File.dirname __FILE__
-proj = "#{here}/.."
-lib = "#{proj}/lib"
-require "#{lib}/nokorector"
-require "wrong/adapters/rspec"
+require "#{here}/spec_helper"
 
-puts "Ruby #{RUBY_VERSION}"
-
-describe Nokorector::Builder do
-  include Nokorector::Builder
+module Nokorector
+describe Builder do
+  include Builder
 
   before do
     @_doc = nil  # todo: cleaner way to clear
@@ -28,12 +24,6 @@ describe Nokorector::Builder do
     x = (alpha :foo => "bar")
     x.to_html.should == "<alpha foo=\"bar\"></alpha>"
   end
-
-  it "can set a single attribute with =" do
-    x = alpha
-    x.foo = "bar"
-    x.to_html.should == "<alpha foo=\"bar\"></alpha>"
-  end    
 
   it "knows tags it knows with dot-class and dot-id-bang" do
     x = alpha.foo.bar!
@@ -104,12 +94,20 @@ describe Nokorector::Builder do
       "</beta></alpha>"
   end
 
-  it "example 1" do
-    pending  "weird bug with tag.att="
-    alpha.foo("bar") do
-      beta.src = "baf"
+  it "nests blocks with another tag" do
+    alpha do
+      beta(:src => "baf")
     end
-    to_html.should == '<alpha class="foo">bar<beta src="baf"></beta></alpha>'
+    to_html.should == 
+      '<alpha><beta src="baf"></beta></alpha>'
+  end
+
+  it "nests blocks after dot-class assignment" do
+    alpha.foo("bar") do
+      beta(:src => "baf")
+    end
+    to_html.should == 
+      '<alpha class="foo">bar<beta src="baf"></beta></alpha>'
   end
 
   tag :a
@@ -224,17 +222,20 @@ describe Nokorector::Builder do
       end
     end
 
-    it "example 2" do
+    it "mixes a tag inside text" do
       put "a", b("c"), "d"
       to_html.should == 'a<b>c</b>d'
     end
 
-    it "mixes" do
+    it "mixes a few tags" do
       pending
-      put "a", img.src="foo.gif", b("c")
-      to_html.should == 'a<img src="foo.gif"></img><b>c</b>'
+      put "a", img(:src=>"foo.gif"), b.top("c")
+      to_html.should == 'a<img src="foo.gif"></img><b class="top">c</b>'
     end
 
   end
 
 end
+end
+
+
