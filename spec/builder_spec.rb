@@ -40,7 +40,7 @@ describe Builder do
   end
 
   it "includes text merely returned by the block" do
-    x = 
+    x =
       alpha do
         "beta"
       end
@@ -51,7 +51,7 @@ describe Builder do
   tag :gamma
 
   it "sets inner block content" do
-    x = 
+    x =
     alpha do
       beta do
         gamma do
@@ -62,20 +62,41 @@ describe Builder do
   end
 
   it "renders several tags in a row" do
-    x = 
+    x =
       alpha do
         beta
         gamma
       end
-    x.to_html.should == 
-      "<alpha>" + 
+    x.to_html.should ==
+      "<alpha>" +
         "<beta></beta>" +
-        "<gamma></gamma>" + 
+        "<gamma></gamma>" +
       "</alpha>"
   end
 
+
+  it "renders several tags in a row, returning seed pointers" do
+    b = c = nil
+    a =
+      alpha do
+        b = beta
+        assert { b.is_a? Seed }
+        assert { b._node.name == "beta" }
+        c = gamma
+        assert { c.is_a? Seed }
+        assert { c._node.name == "gamma" }
+        assert { c._seeds[-2..-1] == [b, c] }
+      end
+    assert { a.is_a? Seed }
+    assert { a._node.name == "alpha" }
+    assert { a._seeds == [a] }
+    d { a._child }
+    assert { a._child._seeds == [b, c] }
+  end
+
+
   it "mixes and matches" do
-    x = 
+    x =
       alpha.foo do
         beta(hee: 'haw').bar!(baz: "baf") do
           gamma do
@@ -85,11 +106,11 @@ describe Builder do
           "plus some text"
         end
       end
-    x.to_html.should == 
-      "<alpha class=\"foo\">" + 
+    x.to_html.should ==
+      "<alpha class=\"foo\">" +
       "<beta hee=\"haw\" id=\"bar\" baz=\"baf\">" +
-      "<gamma>see</gamma>" + 
-      "<gamma>saw</gamma>" + 
+      "<gamma>see</gamma>" +
+      "<gamma>saw</gamma>" +
       "plus some text" +
       "</beta></alpha>"
   end
@@ -98,7 +119,7 @@ describe Builder do
     alpha do
       beta(:src => "baf")
     end
-    to_html.should == 
+    to_html.should ==
       '<alpha><beta src="baf"></beta></alpha>'
   end
 
@@ -106,7 +127,7 @@ describe Builder do
     alpha.foo("bar") do
       beta(:src => "baf")
     end
-    to_html.should == 
+    to_html.should ==
       '<alpha class="foo">bar<beta src="baf"></beta></alpha>'
   end
 
@@ -169,7 +190,7 @@ describe Builder do
           alpha
         }
       }
-      self.to_doc.to_html(:indent => 2, :save_with => 
+      self.to_doc.to_html(:indent => 2, :save_with =>
         Nokogiri::XML::Node::SaveOptions.new.to_i
       ).should =~ Regexp.new(Regexp.escape(<<-HTML))
 <!DOCTYPE xhtml PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
@@ -215,10 +236,10 @@ describe Builder do
         x = alpha
         y = gamma
         put "a", y, beta, x, "c"
-        to_html.should == "a" + 
+        to_html.should == "a" +
           "<gamma></gamma>" +
           "<beta></beta>" +
-          "<alpha></alpha>" + 
+          "<alpha></alpha>" +
           "c"
       end
     end

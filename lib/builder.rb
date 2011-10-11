@@ -24,10 +24,10 @@ module Nokorector::Builder
 
   def to_doc
     dtd = _doc.children.first
-    # _doc.add_child _seed._nodes 
+    # _doc.add_child _seed._nodes
     _doc.children = _seed._nodeset
     _doc.children.first.add_previous_sibling dtd
-    _doc  
+    _doc
   end
 
   def to_html(*args)
@@ -38,9 +38,12 @@ module Nokorector::Builder
     class << into
       def tag tag_name
         define_method(tag_name) do |*args, &block|
-          # puts "#{tag_name}(#{args.map(&:inspect).join(',')})"
-          _seed._tag tag_name
-          _seed._grow *args, &block
+          puts "#{tag_name}(#{args.map(&:inspect).join(',')})"
+
+          sprout = _seed._sprout
+          sprout._tag tag_name
+          @_seed = sprout
+          @_seed = _seed._grow *args, &block
         end
       end
     end
