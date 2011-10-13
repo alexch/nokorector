@@ -114,7 +114,6 @@ module Nokorector
         end
         returned_seed.should == a
         a._seeds.should == [a]
-        d { a._child }
         a._child._seeds.should == [b, c]
       end
 
@@ -185,10 +184,30 @@ module Nokorector
         assert { @seed.to_html == "<a><b></b></a>"}
       end
 
-      it "sets contents when passed a few strings and seeds and whatnot"
-      it "sets child contents when passed a block"
-      it "sets child contents when a block returns a string" do
+      it "sets contents when passed a few strings and seeds and whatnot" do
 
+        b = Seed.new(@builder)._tag("b")
+        c = Seed.new(@builder)._tag("c")
+
+        @seed._grow(b, "foo", c, "bar")
+        assert { @seed.to_html == "<a><b></b>foo<c></c>bar</a>" }
+      end
+
+      it "sets child contents when passed a block" do
+        pending "i'm confused about how to write this test"
+        b = nil
+        @seed._grow do
+          b = Seed.new(@builder)._tag("b")
+          nil
+        end
+        assert { @seed.to_html == "<a><b></b></a>" }
+      end
+
+      it "sets child contents when a block returns a string" do
+        @seed._grow do
+          "foo"
+        end
+        assert { @seed.to_html == "<a>foo</a>" }
       end
 
       it "can do all of the above and chew gum at the same time"

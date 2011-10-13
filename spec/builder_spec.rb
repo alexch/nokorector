@@ -134,10 +134,10 @@ describe Builder do
   tag :img
 
   it "can pass a tag to a tag" do
-    pending
     a(img(:src => "foo.jpg"), :href => "foo.html")
     to_html.should ==
-    "<a href=\"foo.html\"><img src=\"foo.jpg\"></img></a>"
+    # "<a href=\"foo.html\"><img src=\"foo.jpg\"></img></a>"   #todo: figure out self-closing tags
+    "<a href=\"foo.html\"><img src=\"foo.jpg\"></a>"
   end
 
   describe "to_html" do
@@ -151,7 +151,7 @@ describe Builder do
 # and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-to_html
 # and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-write_to
     it "renders with options" do
-      pending
+     pending "figure out nokogiri's pretty printing" do
       alpha {
         beta "foo"
         gamma {
@@ -168,7 +168,7 @@ describe Builder do
 </alpha>
       HTML
     end
-
+   end
   end
 
   describe "to_doc" do
@@ -181,7 +181,7 @@ describe Builder do
 # and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-to_html
 # and http://nokogiri.org/Nokogiri/XML/Node.html#method-i-write_to
     it "keeps the DOCTYPE" do
-      pending
+     pending "Nokogiri pretty printing" do
       alpha {
         beta "foo"
         gamma {
@@ -194,7 +194,7 @@ describe Builder do
 <!DOCTYPE xhtml PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
       HTML
     end
-
+   end
   end
 
   describe "put" do
@@ -246,9 +246,8 @@ describe Builder do
     end
 
     it "mixes a few tags" do
-      pending
       put "a", img(:src=>"foo.gif"), b.top("c")
-      to_html.should == 'a<img src="foo.gif"></img><b class="top">c</b>'
+      to_html.should == 'a<img src="foo.gif"><b class="top">c</b>' # note: nokogiri omits </img> close tag
     end
 
   end
