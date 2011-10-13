@@ -8,7 +8,6 @@ describe Builder do
   before do
     @_doc = nil  # todo: cleaner way to clear
   end
-
   it "doesn't know tags it doesn't know" do
     lambda { foo }.should raise_error(NameError)
   end
@@ -90,7 +89,6 @@ describe Builder do
     assert { a.is_a? Seed }
     assert { a._node.name == "alpha" }
     assert { a._seeds == [a] }
-    d { a._child }
     assert { a._child._seeds == [b, c] }
   end
 
@@ -232,16 +230,14 @@ describe Builder do
     end
 
     it "emits tags in weird orders" do
-      pending "still impossible :-(" do
-        x = alpha
-        y = gamma
-        put "a", y, beta, x, "c"
-        to_html.should == "a" +
-          "<gamma></gamma>" +
-          "<beta></beta>" +
-          "<alpha></alpha>" +
-          "c"
-      end
+      x = alpha
+      y = gamma
+      put "a", y, beta, x, "c"
+      to_html.should == "a" +
+        "<gamma></gamma>" +
+        "<beta></beta>" +
+        "<alpha></alpha>" +
+        "c"
     end
 
     it "mixes a tag inside text" do

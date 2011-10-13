@@ -213,11 +213,9 @@ module Nokorector
             # ignore? or add it? it's already there, right?
           else
             seed = _child._sprout
-            puts "setting #{value} in #{seed}"
             seed._text value
             @child = seed
           end
-
 
         end
 
@@ -259,11 +257,10 @@ module Nokorector
       when /^(.*)!$/
         @active_node['id'] = $1
       else
-        puts "setting class='#{method_name}' from #{caller.first}"
+        # puts "setting class='#{method_name}' from #{caller.first}"
         _add_to_attribute 'class', method_name.to_s
       end
 
-      puts ""
       _grow *args, &block
       self
     end

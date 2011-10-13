@@ -18,7 +18,7 @@ module Nokorector::Builder
 
   def put *args
     args.each do |value|
-      _seed << value
+      @_seed = (_seed << value) unless @_seed == value
     end
   end
 
@@ -38,8 +38,7 @@ module Nokorector::Builder
     class << into
       def tag tag_name
         define_method(tag_name) do |*args, &block|
-          puts "#{tag_name}(#{args.map(&:inspect).join(',')})"
-
+          # puts "#{tag_name}(#{args.map(&:inspect).join(',')})"
           sprout = _seed._sprout
           sprout._tag tag_name
           @_seed = sprout
